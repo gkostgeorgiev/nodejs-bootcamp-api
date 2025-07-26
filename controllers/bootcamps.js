@@ -38,11 +38,12 @@ exports.getBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      success: false,
-      error: "Bad Request: Invalid ID format.",
-    });
+    // console.error(error);
+    // res.status(400).json({
+    //   success: false,
+    //   error: "Bad Request: Invalid ID format.",
+    // });
+    next(error)
   }
 };
 
