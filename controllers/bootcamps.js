@@ -13,10 +13,7 @@ exports.getBootcamps = async (req, res, next) => {
       data: bootcamps,
     });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      success: false,
-    });
+    next(error);
   }
 };
 
@@ -27,19 +24,18 @@ exports.getBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findById(req.params.id);
 
-    if (!bootcamp)
+    if (!bootcamp) {
       return next(
         new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404)
       );
+    }
 
     res.status(200).json({
       success: true,
       data: bootcamp,
     });
   } catch (error) {
-    next(
-      new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404)
-    );
+    next(error);
   }
 };
 
@@ -54,11 +50,7 @@ exports.createBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      success: false,
-      error: "Bad Request: Invalid data provided.",
-    });
+    next(error);
   }
 };
 
@@ -73,10 +65,9 @@ exports.updateBootcamp = async (req, res, next) => {
     });
 
     if (!bootcamp) {
-      return res.status(400).json({
-        success: false,
-        error: "Not Found: Bootcamp not found.",
-      });
+      return next(
+        new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404)
+      );
     }
 
     res.status(200).json({
@@ -84,11 +75,7 @@ exports.updateBootcamp = async (req, res, next) => {
       data: bootcamp,
     });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      success: false,
-      error: "Bad Request: Invalid data provided.",
-    });
+    next(error);
   }
 };
 
@@ -99,10 +86,9 @@ exports.deleteBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
     if (!bootcamp) {
-      return res.status(400).json({
-        success: false,
-        error: "Not Found: Bootcamp not found.",
-      });
+      return next(
+        new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404)
+      );
     }
 
     res.status(200).json({
@@ -110,10 +96,6 @@ exports.deleteBootcamp = async (req, res, next) => {
       data: {},
     });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      success: false,
-      error: "Bad Request: Invalid ID format.",
-    });
+    next(error);
   }
 };
