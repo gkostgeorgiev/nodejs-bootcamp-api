@@ -50,6 +50,7 @@ const BootcampSchema = new mongoose.Schema({
       index: "2dsphere",
     },
     formattedAddress: String,
+    streetNumber: String,
     street: String,
     city: String,
     state: String,
@@ -110,16 +111,40 @@ BootcampSchema.pre("save", function (next) {
 // Geocode & create location field
 BootcampSchema.pre("save", async function (next) {
   const loc = await geocoder.geocode(this.address);
+  console.log('loc: ', loc);
+  
+  let street = '';
+  if (loc[0].streetNumber && loc[0].streetName) {
+    street = `${loc[0].streetNumber} ${loc[0].streetName}`;
+  } else if (loc[0].streetName) {
+    street = loc[0].streetName;
+  }
+
+  // Create formatted address from available components
+  const addressParts = [
+    street,
+    loc[0].city,
+    loc[0].state,
+    loc[0].zipcode,
+    loc[0].country
+  ].filter(part => part); // Remove undefined/null values
+  
   this.location = {
     type: "Point",
     coordinates: [loc[0].longitude, loc[0].latitude],
-    formattedAddress: loc[0].formattedAddress,
+    formattedAddress: addressParts.join(', '),
+    streetNumber: loc[0].streetNumber || '',
     street: loc[0].streetName,
     city: loc[0].city,
-    state: loc[0].stateCode,
+    state: loc[0].state,
     zipcode: loc[0].zipcode,
     country: loc[0].countryCode,
   };
+  
+  // Don't save the original address field since we have the geocoded location
+  this.address = undefined;
+  
+  next();
 });
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
