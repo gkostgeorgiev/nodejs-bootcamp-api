@@ -111,7 +111,6 @@ BootcampSchema.pre("save", function (next) {
 // Geocode & create location field
 BootcampSchema.pre("save", async function (next) {
   const loc = await geocoder.geocode(this.address);
-  console.log('loc: ', loc);
   
   let street = '';
   if (loc[0].streetNumber && loc[0].streetName) {
