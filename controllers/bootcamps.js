@@ -7,7 +7,45 @@ const geocoder = require("../utils/geocoder");
 // @route   GET /api/v1/bootcamps
 // @access  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  let query;
+
+  // Copy req.query
+  let reqQuery = { ...req.query };
+  console.log('Original reqQuery:', reqQuery);
+
+  // Remove fields that are not for filtering
+  const removeFields = ['select', 'sort', 'page', 'limit'];
+  removeFields.forEach(param => delete reqQuery[param]);
+
+  // Convert bracket notation to nested objects DIRECTLY
+  const finalQuery = {};
+  Object.keys(reqQuery).forEach(key => {
+    if (key.includes('[') && key.includes(']')) {
+      // Handle bracket notation like "averageCost[lte]"
+      const field = key.substring(0, key.indexOf('['));
+      const operator = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
+      
+      if (!finalQuery[field]) {
+        finalQuery[field] = {};
+      }
+      
+      // Convert string to number if it's numeric
+      const value = !isNaN(reqQuery[key]) ? Number(reqQuery[key]) : reqQuery[key];
+      finalQuery[field][`$${operator}`] = value;
+    } else {
+      finalQuery[key] = reqQuery[key];
+    }
+  });
+
+  console.log('Processed query object:', finalQuery);
+
+  // Finding resource
+  query = Bootcamp.find(finalQuery);
+
+  const bootcamps = await query;
+
+  console.log('Database results:', bootcamps.map(b => ({ name: b.name, averageCost: b.averageCost, type: typeof b.averageCost })));
+  
   res.status(200).json({
     success: true,
     count: bootcamps.length,
@@ -90,7 +128,7 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 
   // Get lat/lng from geocoder
   const loc = await geocoder.geocode(zipcode);
-  const filteredLoc = loc.filter((item) => item.countryCode === 'us');
+  const filteredLoc = loc.filter((item) => item.countryCode === "us");
   const latitude = filteredLoc[0].latitude;
   const longitude = filteredLoc[0].longitude;
 
