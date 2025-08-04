@@ -11,7 +11,12 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
   // Copy req.query
   let reqQuery = { ...req.query };
-  console.log('Original reqQuery:', reqQuery);
+
+  let queryStr = JSON.stringify(reqQuery);
+
+  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+
+  query = Bootcamp.find(JSON.parse(queryStr));
 
   // Remove fields that are not for filtering
   const removeFields = ['select', 'sort', 'page', 'limit'];
@@ -37,15 +42,25 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     }
   });
 
-  console.log('Processed query object:', finalQuery);
-
   // Finding resource
   query = Bootcamp.find(finalQuery);
 
+  // Select fields
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  // sort
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-createdAt'); // Default sort by createdAt
+  }
+
   const bootcamps = await query;
 
-  console.log('Database results:', bootcamps.map(b => ({ name: b.name, averageCost: b.averageCost, type: typeof b.averageCost })));
-  
   res.status(200).json({
     success: true,
     count: bootcamps.length,
