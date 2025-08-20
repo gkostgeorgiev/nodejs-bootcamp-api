@@ -14,28 +14,33 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
   let queryStr = JSON.stringify(reqQuery);
 
-  queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
 
   query = Bootcamp.find(JSON.parse(queryStr));
 
   // Remove fields that are not for filtering
-  const removeFields = ['select', 'sort', 'page', 'limit'];
-  removeFields.forEach(param => delete reqQuery[param]);
+  const removeFields = ["select", "sort", "page", "limit"];
+  removeFields.forEach((param) => delete reqQuery[param]);
 
   // Convert bracket notation to nested objects DIRECTLY
   const finalQuery = {};
-  Object.keys(reqQuery).forEach(key => {
-    if (key.includes('[') && key.includes(']')) {
+  Object.keys(reqQuery).forEach((key) => {
+    if (key.includes("[") && key.includes("]")) {
       // Handle bracket notation like "averageCost[lte]"
-      const field = key.substring(0, key.indexOf('['));
-      const operator = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
-      
+      const field = key.substring(0, key.indexOf("["));
+      const operator = key.substring(key.indexOf("[") + 1, key.indexOf("]"));
+
       if (!finalQuery[field]) {
         finalQuery[field] = {};
       }
-      
+
       // Convert string to number if it's numeric
-      const value = !isNaN(reqQuery[key]) ? Number(reqQuery[key]) : reqQuery[key];
+      const value = !isNaN(reqQuery[key])
+        ? Number(reqQuery[key])
+        : reqQuery[key];
       finalQuery[field][`$${operator}`] = value;
     } else {
       finalQuery[key] = reqQuery[key];
@@ -54,19 +59,19 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
   // Select fields
   if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
+    const fields = req.query.select.split(",").join(" ");
     query = query.select(fields);
   }
 
   // sort
   if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
+    const sortBy = req.query.sort.split(",").join(" ");
     query = query.sort(sortBy);
   } else {
-    query = query.sort('-createdAt'); // Default sort by createdAt
+    query = query.sort("-createdAt"); // Default sort by createdAt
   }
 
-  const bootcamps = await query;
+  const bootcamps = await query.populate("courses");
 
   const pagination = {};
   if (endIndex < total) {
@@ -87,7 +92,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     success: true,
     count: bootcamps.length,
     data: bootcamps,
-    pagination
+    pagination,
   });
 });
 
@@ -145,12 +150,15 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/bootcamps/:id
 // @access  Private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id);
+
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with ID of ${req.params.id}`, 404)
     );
   }
+
+  await bootcamp.deleteOne();
 
   res.status(200).json({
     success: true,
