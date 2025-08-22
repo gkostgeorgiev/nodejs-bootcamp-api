@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad object ID error
   if (err.name === "CastError") {
-    const message = `Resource not found with ID of ${err.value}`;
+    const message = `Resource not found`;
     error = new ErrorResponse(message, 404);
   }
 
@@ -25,6 +25,14 @@ const errorHandler = (err, req, res, next) => {
       .map((val) => val.message)
       .join(", ");
     error = new ErrorResponse(message, 400);
+  }
+
+  // Prevent NoSQL injections
+  if (err.message && err.message.startsWith("Cannot set property query")) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid input detected. NoSQL injection attempt blocked.",
+    });
   }
 
   res.status(error.statusCode || 500).json({
