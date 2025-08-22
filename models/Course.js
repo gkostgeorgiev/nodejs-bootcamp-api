@@ -68,8 +68,6 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
   }
 }
 
-// const courses = Course.find();
-
 // Call getAverageCost after saving
 CourseSchema.post("save", async function () {
   await this.constructor.getAverageCost(this.bootcamp);
