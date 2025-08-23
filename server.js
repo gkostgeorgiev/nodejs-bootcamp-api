@@ -7,6 +7,9 @@ const fileupload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp"); 
+
 const errorHandler = require("./middleware/error");
 const { sanitizeBody } = require("./middleware/sanitize");
 const xssProtection = require("./middleware/xssProtection");
@@ -45,6 +48,16 @@ app.use(sanitizeBody);
 
 // XSS Protection
 app.use(xssProtection);
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
+// Prevent HTTP param pollution
+app.use(hpp());
 
 // Set security headers
 app.use(helmet());
