@@ -5,9 +5,11 @@ const connectDB = require("./config/db");
 const colors = require("colors");
 const fileupload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
-const errorHandler = require("./middleware/error");
 const path = require("path");
+const helmet = require("helmet");
+const errorHandler = require("./middleware/error");
 const { sanitizeBody } = require("./middleware/sanitize");
+const xssProtection = require("./middleware/xssProtection");
 
 // Load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -39,7 +41,13 @@ if (process.env.NODE_ENV === "development") {
 app.use(fileupload());
 
 // Sanitize data
-app.use(sanitizeBody)
+app.use(sanitizeBody);
+
+// XSS Protection
+app.use(xssProtection);
+
+// Set security headers
+app.use(helmet());
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
