@@ -28,4 +28,4 @@ function sanitizeBody(req, res, next) {
   next();
 }
 
-module.exports = { sanitizeBody };
+module.exports = sanitizeBody;

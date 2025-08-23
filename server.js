@@ -8,10 +8,11 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const hpp = require("hpp"); 
+const hpp = require("hpp");
+const cors = require("cors");
 
 const errorHandler = require("./middleware/error");
-const { sanitizeBody } = require("./middleware/sanitize");
+const sanitizeBody = require("./middleware/sanitize");
 const xssProtection = require("./middleware/xssProtection");
 
 // Load env vars
@@ -58,6 +59,9 @@ app.use(limiter);
 
 // Prevent HTTP param pollution
 app.use(hpp());
+
+// Enable CORS
+app.use(cors());
 
 // Set security headers
 app.use(helmet());
