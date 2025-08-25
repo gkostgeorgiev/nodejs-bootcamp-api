@@ -4,6 +4,9 @@ Create the backend for a bootcamp directory website. All of the functionality be
 
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://documenter.getpostman.com/view/21684142/2sB3BLk7pJ#8b64e047-438d-4903-8b13-d569c47b2368)
 
+## Deployed on onRender - it may take up to 1 min for the request to be processed
+BaseURL: https://bootcamp-api-3nwm.onrender.com/
+
 ### Bootcamps
 
 - List all bootcamps in the database
@@ -97,31 +100,3 @@ Create the backend for a bootcamp directory website. All of the functionality be
 - Add a rate limit for requests of 100 requests per 10 minutes
 - Protect against http param polution
 - Use cors to make API public (for now)
-
-## Documentation
-
-- Use Postman to create documentation
-- Use docgen to create HTML files from Postman
-- Add html files as the / route for the api
-
-## Deployment (Digital Ocean)
-
-- Push to Github
-- Create a droplet - https://m.do.co/c/5424d440c63a
-- Clone repo on to server
-- Use PM2 process manager
-- Enable firewall (ufw) and open needed ports
-- Create an NGINX reverse proxy for port 80
-- Connect a domain name
-- Install an SSL using Let's Encrypt
-
-## Code Related Suggestions
-
-- NPM scripts for dev and production env
-- Config file for important constants
-- Use controller methods with documented descriptions/routes
-- Error handling middleware
-- Authentication middleware for protecting routes and setting user roles
-- Validation using Mongoose and no external libraries
-- Use async/await (create middleware to clean up controller methods)
-- Create a database seeder to import and destroy data
