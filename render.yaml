@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: bootcamp-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 30d
+      - key: JWT_COOKIE_EXPIRE
+        value: 30
+      - key: GEOCODER_PROVIDER
+        value: mapquest
+      - key: GEOCODER_API_KEY
+        sync: false
+      - key: FILE_UPLOAD_PATH
+        value: ./public/uploads
+      - key: MAX_FILE_UPLOAD
+        value: 1000000
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_EMAIL
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: FROM_NAME
+        sync: false
