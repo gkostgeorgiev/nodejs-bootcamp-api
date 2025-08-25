@@ -7,7 +7,10 @@
     "start": "cross-env NODE_ENV=production node server",
     "dev": "nodemon server"
   },
-  "author": "",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "Georgi Kostadinov",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^3.0.2",
