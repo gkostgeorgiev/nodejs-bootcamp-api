@@ -19,8 +19,6 @@ services:
         value: 30
       - key: GEOCODER_PROVIDER
         value: mapquest
-      - key: GEOCODER_API_KEY
-        sync: false
       - key: FILE_UPLOAD_PATH
         value: ./public/uploads
       - key: MAX_FILE_UPLOAD
