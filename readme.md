@@ -5,7 +5,7 @@ Create the backend for a bootcamp directory website. All of the functionality be
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://documenter.getpostman.com/view/21684142/2sB3BLk7pJ#8b64e047-438d-4903-8b13-d569c47b2368)
 
 Deployed on onRender - it may take up to 1 min for the request to be processed
-BaseURL: https://bootcamp-api-3nwm.onrender.com/
+# BaseURL: https://bootcamp-api-3nwm.onrender.com/
 
 ### Bootcamps
 
