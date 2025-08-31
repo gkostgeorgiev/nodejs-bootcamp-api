@@ -1,6 +1,6 @@
 # Bootcamp Backend API Specifications
 
-Create the backend for a bootcamp directory website. All of the functionality below is fully implmented in this project.
+Backend for a bootcamp directory website.
 
 [![Documentation](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://documenter.getpostman.com/view/21684142/2sB3BLk7pJ#8b64e047-438d-4903-8b13-d569c47b2368)
 
